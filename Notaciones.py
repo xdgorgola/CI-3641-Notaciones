@@ -1,10 +1,13 @@
 from __future__ import annotations
 
+# TOKENS REPRESENTATIVOS DE ASOCIACION A IZQUIERDA Y A DERECHA
 ASOC_IZ = "IZ"
 ASOC_DE = "DE"
 
 class NodoNotacion:
-    
+    """
+    Nodo que contiene un token de una expresion logica a evaluar/traducir.
+    """
     def __init__(self : NodoNotacion, tok : str, lv : NodoNotacion, rv : NodoNotacion) -> None:
         self.tok : str = tok
         self.lv : NodoNotacion = lv
@@ -12,6 +15,16 @@ class NodoNotacion:
 
 
 def precedencia(simbolo : str) -> int:
+    """
+    Calcula la precedencia de un operador.
+
+    Arguments:
+        simbolo -- Operador
+
+    Returns:
+        Precedencia del operador
+    """
+
     assert(simbolo == "^" or simbolo == "&" or simbolo == "|" \
             or simbolo == "=>")
 
@@ -25,20 +38,30 @@ def precedencia(simbolo : str) -> int:
     
 
 def asociacion(simbolo : str) -> str:
+    """
+    Devuelve el tipo de asociacion de un operador
+
+    Arguments:
+        simbolo -- Operador
+
+    Returns:
+        Asociacion del operador
+    """
     assert(simbolo == "&" or simbolo == "|" or simbolo == "=>")
     if (simbolo == "&" or simbolo == "|"):
         return ASOC_IZ
     return ASOC_DE
     
 
-def es_simbolo(token : str) -> bool:
-    """_summary_
+def es_operador(token : str) -> bool:
+    """
+    Indica si un simbolo es un operador logico
 
     Arguments:
-        token -- _description_
+        token -- Simbolo a examinar
 
     Returns:
-        _description_
+        True si el simbolo es un operador logico. False en otro caso.
     """
 
     token : str = token.strip()
@@ -49,13 +72,14 @@ def es_simbolo(token : str) -> bool:
 
 
 def valor_booleano(valor : str) -> bool:
-    """_summary_
+    """
+    Calcula el valor booleano de un simbolo
 
     Arguments:
-        valor -- _description_
+        valor -- Simbolo a convertir a booleano
 
     Returns:
-        _description_
+        True si el simbolo es true. False si es false.
     """
 
     valor = valor.lower()
@@ -64,15 +88,16 @@ def valor_booleano(valor : str) -> bool:
 
 
 def realizar_operacion_binaria(izq : bool, der : bool, ope : str) -> bool:
-    """_summary_
+    """
+    Realiza la operacion binaria representada por un operador.
 
     Arguments:
-        izq -- _description_
-        der -- _description_
-        ope -- _description_
+        izq -- Operando izquierdo
+        der -- Operando derecho
+        ope -- Operador
 
     Returns:
-        _description_
+        Resultado de la operacion binaria
     """
     
     assert(ope == "&" or ope == "|" or ope == "=>")
@@ -85,13 +110,14 @@ def realizar_operacion_binaria(izq : bool, der : bool, ope : str) -> bool:
 
 
 def calcular_valor_prefijo(expresion : str) -> bool:
-    """_summary_
+    """
+    Calcula el valor de una expresion logica prefija
 
     Arguments:
-        expresion -- _description_
+        expresion -- Expresion prefija a evaluar
 
     Returns:
-        _description_
+        Valor de la expresion prefija
     """
 
     tokens : list[str] = expresion.split()
@@ -100,7 +126,7 @@ def calcular_valor_prefijo(expresion : str) -> bool:
     valores : list[bool] = []
     while len(tokens) > 0:
         i : str = tokens.pop()
-        if (not es_simbolo(i)):
+        if (not es_operador(i)):
             valores.append(valor_booleano(i))
             continue
         
@@ -108,7 +134,6 @@ def calcular_valor_prefijo(expresion : str) -> bool:
             izq : bool = valores.pop()
             der : bool = valores.pop()
             valores.append(realizar_operacion_binaria(izq, der, i))
-            print(f"{izq} {i} {der} -> {realizar_operacion_binaria(izq, der, i)}")
             continue
             
         valores.append(not valores.pop())
@@ -117,14 +142,16 @@ def calcular_valor_prefijo(expresion : str) -> bool:
 
 
 def calcular_valor_postfijo(expresion : str) -> bool:
-    """_summary_
+    """
+    Calcula el valor de una expresion logica postfija
 
     Arguments:
-        expresion -- _description_
+        expresion -- Expresion postfija a evaluar
 
     Returns:
-        _description_
+        Valor de la expresion postfija
     """
+
 
     tokens : list[str] = expresion.split()
     tokens = tokens[::-1]
@@ -133,7 +160,7 @@ def calcular_valor_postfijo(expresion : str) -> bool:
     valores : list[bool] = []
     while len(tokens) > 0:
         i : str = tokens.pop()
-        if (not es_simbolo(i)):
+        if (not es_operador(i)):
             valores.append(valor_booleano(i))
             continue
         
@@ -149,15 +176,17 @@ def calcular_valor_postfijo(expresion : str) -> bool:
 
 
 def realizar_operacion_binaria_arbol(izq : NodoNotacion, der : NodoNotacion, ope : str) -> NodoNotacion:
-    """_summary_
+    """
+    Realiza una operacion binaria entre dos nodos de tokens y 
+    crea el nodo resultante de esta peracon
 
     Arguments:
-        izq -- _description_
-        der -- _description_
-        ope -- _description_
+        izq -- Operando izquierdo
+        der -- Operando derecho
+        ope -- Operador
 
     Returns:
-        _description_
+        Nodo representativo de la operacion binaria
     """
     
     assert(ope == "&" or ope == "|" or ope == "=>")
@@ -165,13 +194,23 @@ def realizar_operacion_binaria_arbol(izq : NodoNotacion, der : NodoNotacion, ope
 
 
 def crear_arbol_prefijo(expresion : str) -> NodoNotacion:
+    """
+    Crea un arbol que representa una expresion prefija
+
+    Arguments:
+        expresion -- Expresion base
+
+    Returns:
+        Raiz del arbol
+    """
+
     tokens : list[str] = expresion.split()
     assert(len(tokens) > 0)
 
     valores : list[NodoNotacion] = []
     while len(tokens) > 0:
         i : str = tokens.pop()
-        if (not es_simbolo(i)):
+        if (not es_operador(i)):
             valores.append(NodoNotacion(i, None, None))
             continue
         
@@ -187,13 +226,14 @@ def crear_arbol_prefijo(expresion : str) -> NodoNotacion:
 
 
 def crear_arbol_postfijo(expresion : str) -> NodoNotacion:
-    """_summary_
+    """
+    Crea un arbol que representa una expresion postfija
 
     Arguments:
-        expresion -- _description_
+        expresion -- Expresion base
 
     Returns:
-        _description_
+        Raiz del arbol
     """
 
     tokens : list[str] = expresion.split()
@@ -203,7 +243,7 @@ def crear_arbol_postfijo(expresion : str) -> NodoNotacion:
     valores : list[bool] = []
     while len(tokens) > 0:
         i : str = tokens.pop()
-        if (not es_simbolo(i)):
+        if (not es_operador(i)):
             valores.append(NodoNotacion(i, None, None))
             continue
         
@@ -218,19 +258,65 @@ def crear_arbol_postfijo(expresion : str) -> NodoNotacion:
     return valores.pop()
 
 
-def tiene_mayor_preced(raiz : NodoNotacion, hijo : NodoNotacion) -> bool:
-    return es_simbolo(hijo.tok) and precedencia(raiz.tok) > precedencia(hijo.tok)
+def tiene_mayor_preced(a : NodoNotacion, b : NodoNotacion) -> bool:
+    """
+    Indica si un nodo a tiene mayor precedencia que un nodo b
+    Arguments:
+        a -- Nodo a
+        b -- Nodo b
+
+    Remarks:
+        Ambos nodos deben ser operadores o devuelve false
+
+    Returns:
+        True si a tiene mayor precedencia que b. False en caso contrairo
+    """
+
+    return es_operador(b.tok) and precedencia(a.tok) > precedencia(b.tok)
 
 
-def tiene_misma_preced(raiz : NodoNotacion, hijo : NodoNotacion) -> bool:
-    return es_simbolo(hijo.tok) and precedencia(raiz.tok) == precedencia(hijo.tok)
+def tiene_misma_preced(a : NodoNotacion, b : NodoNotacion) -> bool:
+    """
+    Indica si un nodo a tiene igual precedencia que un nodo b
+    Arguments:
+        a -- Nodo a
+        b -- Nodo b
+
+    Remarks:
+        Ambos nodos deben ser operadores o devuelve false
+
+    Returns:
+        True si a tiene igual precedencia que b. False en caso contrairo
+    """
+
+    return es_operador(b.tok) and precedencia(a.tok) == precedencia(b.tok)
 
 
-def tiene_misma_asoc(raiz : NodoNotacion, hijo : NodoNotacion) -> bool:
-    return es_simbolo(hijo.tok) and asociacion(raiz.tok) == asociacion(hijo.tok)
+def tiene_misma_asoc(a : NodoNotacion, b : NodoNotacion) -> bool:
+    """
+    Indica si un nodo a tiene igual asociacion que un nodo b
+    Arguments:
+        a -- Nodo a
+        b -- Nodo b
+
+    Remarks:
+        Ambos nodos deben ser operadores o devuelve false
+
+    Returns:
+        True si a tiene igual asociacion que b. False en caso contrairo
+    """
+
+    return es_operador(b.tok) and asociacion(a.tok) == asociacion(b.tok)
 
 
 def recorrer_infijo(raiz : NodoNotacion) -> None:
+    """
+    Recorre e imprime de forma infija un arbol de una
+    expresion logica
+
+    Arguments:
+        raiz -- Raiz del arbol
+    """
     
     if (raiz.lv != None):
         if (tiene_mayor_preced(raiz, raiz.lv)):
@@ -244,49 +330,52 @@ def recorrer_infijo(raiz : NodoNotacion) -> None:
         else:
             recorrer_infijo(raiz.lv)
 
-    print(raiz.tok, end=" ")
+    if (es_operador(raiz.tok)):
+        print(f" {raiz.tok} ",end="")
+    else:
+        print(raiz.tok, end="")
 
     if (raiz.rv != None):
         if (tiene_mayor_preced(raiz, raiz.rv)):
             print("(", end="")
             recorrer_infijo(raiz.rv)
-            print(")", end="")
+            print(")", end=" ")
         elif (tiene_misma_preced(raiz, raiz.rv) and tiene_misma_asoc(raiz, raiz.rv) and asociacion(raiz.tok) == ASOC_IZ):
             print("(", end="")
             recorrer_infijo(raiz.rv)
-            print(")", end="")
+            print(")", end=" ")
         else:
             recorrer_infijo(raiz.rv)
     
 
-a = crear_arbol_prefijo("| & => true true false ^ true")
-recorrer_infijo(a)
-print()
-
-b = crear_arbol_prefijo("& | => true true false | true ^ false")
-recorrer_infijo(b)
-print()
-
-c = crear_arbol_prefijo("=> => => => true false true false true")
-recorrer_infijo(c)
-print()
-
-d = crear_arbol_prefijo("| & | & true true true true true")
-recorrer_infijo(d)
-print()
-
-e = crear_arbol_prefijo("| & ^ => true true false true")
-recorrer_infijo(e)
-print()
-
-f = crear_arbol_prefijo("=> true => true => true => true true")
-recorrer_infijo(f)
-print()
-
-g = crear_arbol_prefijo("| true & true & true | true & true true")
-recorrer_infijo(g)
-print()
-
-h = crear_arbol_prefijo("| & & | & true true true true true true")
-recorrer_infijo(h)
-print()
+#a = crear_arbol_prefijo("| & => true true false ^ true")
+#recorrer_infijo(a)
+#print()
+#
+#b = crear_arbol_prefijo("& | => true true false | true ^ false")
+#recorrer_infijo(b)
+#print()
+#
+#c = crear_arbol_prefijo("=> => => => true false true false true")
+#recorrer_infijo(c)
+#print()
+#
+#d = crear_arbol_prefijo("| & | & true true true true true")
+#recorrer_infijo(d)
+#print()
+#
+#e = crear_arbol_prefijo("| & ^ => true true false true")
+#recorrer_infijo(e)
+#print()
+#
+#f = crear_arbol_prefijo("=> true => true => true => true true")
+#recorrer_infijo(f)
+#print()
+#
+#g = crear_arbol_prefijo("| true & true & true | true & true true")
+#recorrer_infijo(g)
+#print()
+#
+#h = crear_arbol_prefijo("| & & | & true true true true true true")
+#recorrer_infijo(h)
+#print()
