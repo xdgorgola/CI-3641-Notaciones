@@ -309,9 +309,9 @@ def tiene_misma_asoc(a : NodoNotacion, b : NodoNotacion) -> bool:
     return es_operador(b.tok) and asociacion(a.tok) == asociacion(b.tok)
 
 
-def recorrer_infijo(raiz : NodoNotacion) -> None:
+def recorrer_infijo_string(raiz : NodoNotacion, acum : str = "") -> str:
     """
-    Recorre e imprime de forma infija un arbol de una
+    Recorre un arbol de expresion y crea un string infijo de una
     expresion logica
 
     Arguments:
@@ -320,62 +320,72 @@ def recorrer_infijo(raiz : NodoNotacion) -> None:
     
     if (raiz.lv != None):
         if (tiene_mayor_preced(raiz, raiz.lv)):
-            print("(", end="")
-            recorrer_infijo(raiz.lv)
-            print(")", end="")
+            acum += "("
+            acum += recorrer_infijo_string(raiz.lv)
+            acum += ")"
         elif (tiene_misma_preced(raiz, raiz.lv) and tiene_misma_asoc(raiz, raiz.lv) and asociacion(raiz.tok) == ASOC_DE):
-            print("(", end="")
-            recorrer_infijo(raiz.lv)
-            print(")", end="")
+            acum += "("
+            acum += recorrer_infijo_string(raiz.lv)
+            acum += ")"
         else:
-            recorrer_infijo(raiz.lv)
+            acum += recorrer_infijo_string(raiz.lv)
 
     if (es_operador(raiz.tok)):
-        print(f" {raiz.tok} ",end="")
+        acum += f" {raiz.tok} "
     else:
-        print(raiz.tok, end="")
+        acum += f"{raiz.tok}"
 
     if (raiz.rv != None):
         if (tiene_mayor_preced(raiz, raiz.rv)):
-            print("(", end="")
-            recorrer_infijo(raiz.rv)
-            print(")", end=" ")
+            acum += "("
+            acum += recorrer_infijo_string(raiz.rv)
+            acum += ")"
         elif (tiene_misma_preced(raiz, raiz.rv) and tiene_misma_asoc(raiz, raiz.rv) and asociacion(raiz.tok) == ASOC_IZ):
-            print("(", end="")
-            recorrer_infijo(raiz.rv)
-            print(")", end=" ")
+            acum += "("
+            acum += recorrer_infijo_string(raiz.rv)
+            acum += ")"
         else:
-            recorrer_infijo(raiz.rv)
+            acum += recorrer_infijo_string(raiz.rv)
+    
+    return acum
     
 
 #a = crear_arbol_prefijo("| & => true true false ^ true")
 #recorrer_infijo(a)
 #print()
+#print(f"{recorrer_infijo_string(a)}\n")
 #
 #b = crear_arbol_prefijo("& | => true true false | true ^ false")
 #recorrer_infijo(b)
 #print()
+#print(f"{recorrer_infijo_string(b)}\n")
 #
 #c = crear_arbol_prefijo("=> => => => true false true false true")
 #recorrer_infijo(c)
 #print()
+#print(f"{recorrer_infijo_string(c)}\n")
 #
 #d = crear_arbol_prefijo("| & | & true true true true true")
 #recorrer_infijo(d)
 #print()
+#print(f"{recorrer_infijo_string(d)}\n")
 #
 #e = crear_arbol_prefijo("| & ^ => true true false true")
 #recorrer_infijo(e)
 #print()
+#print(f"{recorrer_infijo_string(e)}\n")
 #
 #f = crear_arbol_prefijo("=> true => true => true => true true")
 #recorrer_infijo(f)
 #print()
+#print(f"{recorrer_infijo_string(f)}\n")
 #
 #g = crear_arbol_prefijo("| true & true & true | true & true true")
 #recorrer_infijo(g)
 #print()
+#print(f"{recorrer_infijo_string(g)}\n")
 #
 #h = crear_arbol_prefijo("| & & | & true true true true true true")
 #recorrer_infijo(h)
 #print()
+#print(f"{recorrer_infijo_string(h)}\n")

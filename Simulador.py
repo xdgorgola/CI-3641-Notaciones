@@ -1,5 +1,5 @@
 from Notaciones import calcular_valor_prefijo, calcular_valor_postfijo, \
-    NodoNotacion, crear_arbol_prefijo, crear_arbol_postfijo, recorrer_infijo
+    NodoNotacion, crear_arbol_prefijo, crear_arbol_postfijo, recorrer_infijo_string
 
 # Tokens programa
 TOKEN_MOSTRAR = "MOSTRAR"
@@ -40,10 +40,9 @@ def comando_mostrar(tokens : list[str]) -> None:
     pre : bool = (tipo == TOKEN_PRE)
     exp : str = ' '.join(tokens).strip()
     if (pre):
-        recorrer_infijo(crear_arbol_prefijo(exp))
+        print(f"{recorrer_infijo_string(crear_arbol_prefijo(exp))}\n")
     else:
-        recorrer_infijo(crear_arbol_postfijo(exp))
-    print()
+        print(f"{recorrer_infijo_string(crear_arbol_postfijo(exp))}\n")
 
 
 def comando_evaluar(tokens : list[str]) -> None:
