@@ -309,6 +309,22 @@ def tiene_misma_asoc(a : NodoNotacion, b : NodoNotacion) -> bool:
     return es_operador(b.tok) and asociacion(a.tok) == asociacion(b.tok)
 
 
+def conflicto_asociativo(raiz : NodoNotacion, hijo : NodoNotacion, asoc_prueba : str) -> bool:
+    """
+    Determina si hay conflictos entre operadores de misma precedencia y asociatividad.
+
+    Arguments:
+        raiz -- Nodo raiz
+        hijo -- Nodo hijo
+        asoc_prueba -- Asociacion de los nodos
+
+    Returns:
+        True si hay conflicto. False en caso contrario.
+    """
+
+    return tiene_misma_preced(raiz, hijo) and tiene_misma_asoc(raiz, hijo) and asociacion(raiz.tok) == asoc_prueba
+
+
 def recorrer_infijo_string(raiz : NodoNotacion, acum : str = "") -> str:
     """
     Recorre un arbol de expresion y crea un string infijo de una
@@ -319,11 +335,7 @@ def recorrer_infijo_string(raiz : NodoNotacion, acum : str = "") -> str:
     """
     
     if (raiz.lv != None):
-        if (tiene_mayor_preced(raiz, raiz.lv)):
-            acum += "("
-            acum += recorrer_infijo_string(raiz.lv)
-            acum += ")"
-        elif (tiene_misma_preced(raiz, raiz.lv) and tiene_misma_asoc(raiz, raiz.lv) and asociacion(raiz.tok) == ASOC_DE):
+        if (tiene_mayor_preced(raiz, raiz.lv) or conflicto_asociativo(raiz, raiz.lv, ASOC_DE)):
             acum += "("
             acum += recorrer_infijo_string(raiz.lv)
             acum += ")"
@@ -336,11 +348,7 @@ def recorrer_infijo_string(raiz : NodoNotacion, acum : str = "") -> str:
         acum += f"{raiz.tok}"
 
     if (raiz.rv != None):
-        if (tiene_mayor_preced(raiz, raiz.rv)):
-            acum += "("
-            acum += recorrer_infijo_string(raiz.rv)
-            acum += ")"
-        elif (tiene_misma_preced(raiz, raiz.rv) and tiene_misma_asoc(raiz, raiz.rv) and asociacion(raiz.tok) == ASOC_IZ):
+        if (tiene_mayor_preced(raiz, raiz.rv) or conflicto_asociativo(raiz, raiz.rv, ASOC_IZ)):
             acum += "("
             acum += recorrer_infijo_string(raiz.rv)
             acum += ")"
