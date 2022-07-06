@@ -1,5 +1,9 @@
 from __future__ import annotations
 
+if __name__ == '__main__':
+    print("You found a secret area!")
+    quit()
+    
 # TOKENS REPRESENTATIVOS DE ASOCIACION A IZQUIERDA Y A DERECHA
 ASOC_IZ = "IZ"
 ASOC_DE = "DE"
@@ -359,45 +363,32 @@ def recorrer_infijo_string(raiz : NodoNotacion, acum : str = "") -> str:
     
 
 #a = crear_arbol_prefijo("| & => true true false ^ true")
-#recorrer_infijo(a)
-#print()
 #print(f"{recorrer_infijo_string(a)}\n")
 #
 #b = crear_arbol_prefijo("& | => true true false | true ^ false")
-#recorrer_infijo(b)
-#print()
 #print(f"{recorrer_infijo_string(b)}\n")
 #
 #c = crear_arbol_prefijo("=> => => => true false true false true")
-#recorrer_infijo(c)
-#print()
 #print(f"{recorrer_infijo_string(c)}\n")
 #
 #d = crear_arbol_prefijo("| & | & true true true true true")
-#recorrer_infijo(d)
-#print()
 #print(f"{recorrer_infijo_string(d)}\n")
 #
 #e = crear_arbol_prefijo("| & ^ => true true false true")
-#recorrer_infijo(e)
-#print()
 #print(f"{recorrer_infijo_string(e)}\n")
 #
 #f = crear_arbol_prefijo("=> true => true => true => true true")
-#recorrer_infijo(f)
-#print()
 #print(f"{recorrer_infijo_string(f)}\n")
 #
 #g = crear_arbol_prefijo("| true & true & true | true & true true")
-#recorrer_infijo(g)
-#print()
+#
 #print(f"{recorrer_infijo_string(g)}\n")
 #
 #h = crear_arbol_prefijo("| & & | & true true true true true true")
-#recorrer_infijo(h)
-#print()
+#
 #print(f"{recorrer_infijo_string(h)}\n")
 #print(calcular_valor_postfijo("true false => false | true false ^ | &"))
+#
 #i = crear_arbol_postfijo("true false => false | true false ^ | &")
 #recorrer_infijo_string(i)
 #print(f"{recorrer_infijo_string(i)}\n")
