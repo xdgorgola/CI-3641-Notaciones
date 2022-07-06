@@ -389,3 +389,7 @@ def recorrer_infijo_string(raiz : NodoNotacion, acum : str = "") -> str:
 #recorrer_infijo(h)
 #print()
 #print(f"{recorrer_infijo_string(h)}\n")
+#print(calcular_valor_postfijo("true false => false | true false ^ | &"))
+#i = crear_arbol_postfijo("true false => false | true false ^ | &")
+#recorrer_infijo_string(i)
+#print(f"{recorrer_infijo_string(i)}\n")
