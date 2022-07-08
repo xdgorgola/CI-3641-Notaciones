@@ -1,8 +1,4 @@
 from __future__ import annotations
-
-if __name__ == '__main__':
-    print("You found a secret area!")
-    quit()
     
 # TOKENS REPRESENTATIVOS DE ASOCIACION A IZQUIERDA Y A DERECHA
 ASOC_IZ = "IZ"
@@ -29,8 +25,8 @@ def precedencia(simbolo : str) -> int:
         Precedencia del operador
     """
 
-    assert(simbolo == "^" or simbolo == "&" or simbolo == "|" \
-            or simbolo == "=>")
+    #assert(simbolo == "^" or simbolo == "&" or simbolo == "|" \
+    #        or simbolo == "=>")
 
     if (simbolo == "^"):
         return 10000
@@ -51,10 +47,8 @@ def asociacion(simbolo : str) -> str:
     Returns:
         Asociacion del operador
     """
-    assert(simbolo == "&" or simbolo == "|" or simbolo == "=>")
-    if (simbolo == "&" or simbolo == "|"):
-        return ASOC_IZ
-    return ASOC_DE
+    #assert(simbolo == "&" or simbolo == "|" or simbolo == "=>")
+    return ASOC_IZ if (simbolo == "&" or simbolo == "|") else ASOC_DE
     
 
 def es_operador(token : str) -> bool:
@@ -69,10 +63,9 @@ def es_operador(token : str) -> bool:
     """
 
     token : str = token.strip()
-    assert(len(token) > 0)
+    #assert(len(token) > 0)
 
-    return token == "&" or token == "|" \
-        or token == "=>" or token == "^"
+    return token == "&" or token == "|" or token == "=>" or token == "^"
 
 
 def valor_booleano(valor : str) -> bool:
@@ -87,7 +80,7 @@ def valor_booleano(valor : str) -> bool:
     """
 
     valor = valor.lower()
-    assert(valor == "true" or valor == "false")
+    #assert(valor == "true" or valor == "false")
     return valor == "true"
 
 
@@ -104,7 +97,7 @@ def realizar_operacion_binaria(izq : bool, der : bool, ope : str) -> bool:
         Resultado de la operacion binaria
     """
     
-    assert(ope == "&" or ope == "|" or ope == "=>")
+    #assert(ope == "&" or ope == "|" or ope == "=>")
 
     if (ope == "&"):
         return izq and der
@@ -125,7 +118,7 @@ def calcular_valor_prefijo(expresion : str) -> bool:
     """
 
     tokens : list[str] = expresion.split()
-    assert(len(tokens) > 0)
+    #assert(len(tokens) > 0)
 
     valores : list[bool] = []
     while len(tokens) > 0:
@@ -156,10 +149,9 @@ def calcular_valor_postfijo(expresion : str) -> bool:
         Valor de la expresion postfija
     """
 
-
     tokens : list[str] = expresion.split()
     tokens = tokens[::-1]
-    assert(len(tokens) > 0)
+    #assert(len(tokens) > 0)
     
     valores : list[bool] = []
     while len(tokens) > 0:
@@ -179,6 +171,36 @@ def calcular_valor_postfijo(expresion : str) -> bool:
     return valores.pop()
 
 
+def crear_arbol(expresion : str, pre : bool) -> bool:
+    """
+    Calcula el valor de una expresion logica postfija
+
+    Arguments:
+        expresion -- Expresion postfija a evaluar
+
+    Returns:
+        Valor de la expresion postfija
+    """
+
+    tokens : list[str] = expresion.split() if pre else (expresion.split())[::-1]
+    valores : list[NodoNotacion] = []
+    
+    while len(tokens) > 0:
+        i : str = tokens.pop()
+        if (not es_operador(i)):
+            valores.append(NodoNotacion(i, None, None))
+            continue
+        
+        if (i != "^"):
+            izq, der = (valores[-1 if pre else -2], valores[-2 if pre else -1])
+            valores = (valores[:-2]) + [(realizar_operacion_binaria_arbol(izq, der, i))]
+            continue
+            
+        valores.append(NodoNotacion("^", None, valores.pop()))
+
+    return valores.pop()
+
+
 def realizar_operacion_binaria_arbol(izq : NodoNotacion, der : NodoNotacion, ope : str) -> NodoNotacion:
     """
     Realiza una operacion binaria entre dos nodos de tokens y 
@@ -193,7 +215,7 @@ def realizar_operacion_binaria_arbol(izq : NodoNotacion, der : NodoNotacion, ope
         Nodo representativo de la operacion binaria
     """
     
-    assert(ope == "&" or ope == "|" or ope == "=>")
+    #assert(ope == "&" or ope == "|" or ope == "=>")
     return NodoNotacion(ope, izq, der)
 
 
@@ -209,7 +231,7 @@ def crear_arbol_prefijo(expresion : str) -> NodoNotacion:
     """
 
     tokens : list[str] = expresion.split()
-    assert(len(tokens) > 0)
+    #assert(len(tokens) > 0)
 
     valores : list[NodoNotacion] = []
     while len(tokens) > 0:
@@ -242,9 +264,9 @@ def crear_arbol_postfijo(expresion : str) -> NodoNotacion:
 
     tokens : list[str] = expresion.split()
     tokens = tokens[::-1]
-    assert(len(tokens) > 0)
+    #assert(len(tokens) > 0)
     
-    valores : list[bool] = []
+    valores : list[NodoNotacion] = []
     while len(tokens) > 0:
         i : str = tokens.pop()
         if (not es_operador(i)):
@@ -252,8 +274,8 @@ def crear_arbol_postfijo(expresion : str) -> NodoNotacion:
             continue
         
         if (i != "^"):
-            der : bool = valores.pop()
-            izq : bool = valores.pop()
+            der : NodoNotacion = valores.pop()
+            izq : NodoNotacion = valores.pop()
             valores.append(realizar_operacion_binaria_arbol(izq, der, i))
             continue
             
@@ -340,27 +362,51 @@ def recorrer_infijo_string(raiz : NodoNotacion, acum : str = "") -> str:
     
     if (raiz.lv != None):
         if (tiene_mayor_preced(raiz, raiz.lv) or conflicto_asociativo(raiz, raiz.lv, ASOC_DE)):
-            acum += "("
-            acum += recorrer_infijo_string(raiz.lv)
-            acum += ")"
+            acum += f"({recorrer_infijo_string(raiz.lv)})"
         else:
             acum += recorrer_infijo_string(raiz.lv)
 
-    if (es_operador(raiz.tok)):
-        acum += f" {raiz.tok} "
-    else:
-        acum += f"{raiz.tok}"
+    acum += f" {raiz.tok} " if es_operador(raiz.tok) else f"{raiz.tok}"
 
     if (raiz.rv != None):
         if (tiene_mayor_preced(raiz, raiz.rv) or conflicto_asociativo(raiz, raiz.rv, ASOC_IZ)):
-            acum += "("
-            acum += recorrer_infijo_string(raiz.rv)
-            acum += ")"
+            acum += f"({recorrer_infijo_string(raiz.rv)})"
         else:
             acum += recorrer_infijo_string(raiz.rv)
     
     return acum
     
+def recorrer_infijo(raiz : NodoNotacion, acumS : str = "") -> tuple[bool, str]:
+    """
+    Recorre un arbol de expresion y crea un string infijo de una
+    expresion logica
+
+    Arguments:
+        raiz -- Raiz del arbol
+    """
+    l = r = (None, None)
+    if (raiz.lv != None):
+        l = recorrer_infijo(raiz.lv)
+        if (tiene_mayor_preced(raiz, raiz.lv) or conflicto_asociativo(raiz, raiz.lv, ASOC_DE)):
+            acumS += f"({l[1]})"
+        else:
+            acumS += f"{l[1]}"
+
+    acumS += f" {raiz.tok} " if es_operador(raiz.tok) else f"{raiz.tok}"
+
+    if (raiz.rv != None):
+        r = recorrer_infijo(raiz.rv)
+        if (tiene_mayor_preced(raiz, raiz.rv) or conflicto_asociativo(raiz, raiz.rv, ASOC_IZ)):
+            acumS += f"({r[1]})"
+        else:
+            acumS += f"{r[1]}"
+    
+    if (es_operador(raiz.tok)):
+        if (raiz.tok == "^"):
+            return (not r[0], acumS)
+        return (realizar_operacion_binaria(l[0], r[0], raiz.tok), acumS)
+    
+    return (valor_booleano(raiz.tok), acumS)
 
 #a = crear_arbol_prefijo("| & => true true false ^ true")
 #print(f"{recorrer_infijo_string(a)}\n")
@@ -389,6 +435,16 @@ def recorrer_infijo_string(raiz : NodoNotacion, acum : str = "") -> str:
 #print(f"{recorrer_infijo_string(h)}\n")
 #print(calcular_valor_postfijo("true false => false | true false ^ | &"))
 #
-#i = crear_arbol_postfijo("true false => false | true false ^ | &")
-#recorrer_infijo_string(i)
-#print(f"{recorrer_infijo_string(i)}\n")
+i = crear_arbol_postfijo("true false => false | true false ^ | &")
+ir = calcular_valor_postfijo("true false => false | true false ^ | &")
+iss = recorrer_infijo_string(i)
+
+xd = crear_arbol("true false => false | true false ^ | &", False)
+
+rxd = recorrer_infijo(xd)
+print(ir == rxd[0])
+print(iss == rxd)
+
+if __name__ == '__main__':
+    print("You found a secret area!")
+    quit()
