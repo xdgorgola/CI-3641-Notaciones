@@ -1,6 +1,5 @@
 import unittest
-from Notaciones import calcular_valor_prefijo, calcular_valor_postfijo, \
-    NodoNotacion, crear_arbol_prefijo, crear_arbol_postfijo, recorrer_infijo_string
+from Notaciones import *
 
 class BuddyAllocationTests(unittest.TestCase):
 
@@ -9,11 +8,11 @@ class BuddyAllocationTests(unittest.TestCase):
         Prueba que los valores se parseen correctamente
         """
 
-        self.assertFalse(calcular_valor_prefijo("false"))
-        self.assertTrue(calcular_valor_prefijo("true"))
+        self.assertFalse(calcular_valor("false", True))
+        self.assertTrue(calcular_valor("true", True))
 
-        self.assertFalse(calcular_valor_postfijo("false"))
-        self.assertTrue(calcular_valor_postfijo("true"))
+        self.assertFalse(calcular_valor("false", False))
+        self.assertTrue(calcular_valor("true", False))
 
     
     def test_tabla_not(self):
@@ -21,11 +20,11 @@ class BuddyAllocationTests(unittest.TestCase):
         Prueba la tabla de la verdad del operador not
         """
         
-        self.assertFalse(calcular_valor_prefijo("^ true"))
-        self.assertTrue(calcular_valor_prefijo("^ false"))
+        self.assertFalse(calcular_valor("^ true", True))
+        self.assertTrue(calcular_valor("^ false", True))
 
-        self.assertFalse(calcular_valor_postfijo("true ^"))
-        self.assertTrue(calcular_valor_postfijo("false ^"))
+        self.assertFalse(calcular_valor("true ^", False))
+        self.assertTrue(calcular_valor("false ^", False))
 
 
     def test_tabla_and(self):
@@ -33,15 +32,15 @@ class BuddyAllocationTests(unittest.TestCase):
         Prueba la tabla de la verdad del operador and
         """
 
-        self.assertFalse(calcular_valor_prefijo("& false true"))
-        self.assertFalse(calcular_valor_prefijo("& true false"))
-        self.assertFalse(calcular_valor_prefijo("& false false"))
-        self.assertTrue(calcular_valor_prefijo("& true true"))
+        self.assertFalse(calcular_valor("& false true", True))
+        self.assertFalse(calcular_valor("& true false", True))
+        self.assertFalse(calcular_valor("& false false", True))
+        self.assertTrue(calcular_valor("& true true", True))
 
-        self.assertFalse(calcular_valor_postfijo("false true &"))
-        self.assertFalse(calcular_valor_postfijo("true false &"))
-        self.assertFalse(calcular_valor_postfijo("false false &"))
-        self.assertTrue(calcular_valor_postfijo("true true &"))
+        self.assertFalse(calcular_valor("false true &", False))
+        self.assertFalse(calcular_valor("true false &", False))
+        self.assertFalse(calcular_valor("false false &", False))
+        self.assertTrue(calcular_valor("true true &", False))
     
 
     def test_tabla_or(self):
@@ -49,15 +48,15 @@ class BuddyAllocationTests(unittest.TestCase):
         Prueba la tabla de la verdad del operador or
         """
 
-        self.assertTrue(calcular_valor_prefijo("| true true"))
-        self.assertTrue(calcular_valor_prefijo("| true false"))
-        self.assertTrue(calcular_valor_prefijo("| false true"))
-        self.assertFalse(calcular_valor_prefijo("| false false"))
+        self.assertTrue(calcular_valor("| true true", True))
+        self.assertTrue(calcular_valor("| true false", True))
+        self.assertTrue(calcular_valor("| false true", True))
+        self.assertFalse(calcular_valor("| false false", True))
 
-        self.assertTrue(calcular_valor_postfijo("true true |"))
-        self.assertTrue(calcular_valor_postfijo("true false |"))
-        self.assertTrue(calcular_valor_postfijo("false true |"))
-        self.assertFalse(calcular_valor_postfijo("false false |"))
+        self.assertTrue(calcular_valor("true true |", False))
+        self.assertTrue(calcular_valor("true false |", False))
+        self.assertTrue(calcular_valor("false true |", False))
+        self.assertFalse(calcular_valor("false false |", False))
     
 
     def test_tabla_imp(self):
@@ -65,15 +64,15 @@ class BuddyAllocationTests(unittest.TestCase):
         Prueba la tabla de la verdad del operador implicacion
         """
 
-        self.assertTrue(calcular_valor_prefijo("=> true true"))
-        self.assertFalse(calcular_valor_prefijo("=> true false"))
-        self.assertTrue(calcular_valor_prefijo("=> false true"))
-        self.assertTrue(calcular_valor_prefijo("=> false false"))
+        self.assertTrue(calcular_valor("=> true true", True))
+        self.assertFalse(calcular_valor("=> true false", True))
+        self.assertTrue(calcular_valor("=> false true", True))
+        self.assertTrue(calcular_valor("=> false false", True))
 
-        self.assertTrue(calcular_valor_postfijo("true true =>"))
-        self.assertFalse(calcular_valor_postfijo("true false =>"))
-        self.assertTrue(calcular_valor_postfijo("false true =>"))
-        self.assertTrue(calcular_valor_postfijo("false false =>"))
+        self.assertTrue(calcular_valor("true true =>", False))
+        self.assertFalse(calcular_valor("true false =>", False))
+        self.assertTrue(calcular_valor("false true =>", False))
+        self.assertTrue(calcular_valor("false false =>", False))
 
 
 if __name__ == '__main__':

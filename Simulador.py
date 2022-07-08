@@ -1,5 +1,4 @@
-from Notaciones import calcular_valor_prefijo, calcular_valor_postfijo, \
-    NodoNotacion, crear_arbol_prefijo, crear_arbol_postfijo, recorrer_infijo_string
+from Notaciones import calcular_valor, calcular_infijo
 
 # Tokens programa
 TOKEN_MOSTRAR = "MOSTRAR"
@@ -20,7 +19,7 @@ def simulator_usage():
     print("\t\t-PRE: Orden pre-fijo")
     print("\t\t-POST: Orden post-fijo")
 
-    print("\n\tSALIR\n\tMata\\sale del programa.")
+    print("\n\tSALIR\n\t\tMata\\sale del programa.")
 
 
 def wrong_params():
@@ -37,12 +36,8 @@ def comando_mostrar(tokens : list[str]) -> None:
     if (tipo != TOKEN_PRE and tipo != TOKEN_POST):
         wrong_params()
         return
-    pre : bool = (tipo == TOKEN_PRE)
     exp : str = ' '.join(tokens).strip()
-    if (pre):
-        print(f"{recorrer_infijo_string(crear_arbol_prefijo(exp))}\n")
-    else:
-        print(f"{recorrer_infijo_string(crear_arbol_postfijo(exp))}\n")
+    print(calcular_infijo(exp, (tipo == TOKEN_PRE)))
 
 
 def comando_evaluar(tokens : list[str]) -> None:
@@ -54,12 +49,8 @@ def comando_evaluar(tokens : list[str]) -> None:
     if (tipo != TOKEN_PRE and tipo != TOKEN_POST):
         wrong_params()
         return
-    pre : bool = (tipo == TOKEN_PRE)
     exp : str = ' '.join(tokens).strip()
-    if (pre):
-        print(str(calcular_valor_prefijo(exp)).lower())
-    else:
-        print(str(calcular_valor_postfijo(exp)).lower())
+    print(str(calcular_valor(exp, (tipo == TOKEN_PRE))).lower())
 
 
 while (run):

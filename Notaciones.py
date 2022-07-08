@@ -25,8 +25,6 @@ def precedencia(simbolo : str) -> int:
         Precedencia del operador
     """
 
-    #assert(simbolo == "^" or simbolo == "&" or simbolo == "|" \
-    #        or simbolo == "=>")
 
     if (simbolo == "^"):
         return 10000
@@ -47,7 +45,7 @@ def asociacion(simbolo : str) -> str:
     Returns:
         Asociacion del operador
     """
-    #assert(simbolo == "&" or simbolo == "|" or simbolo == "=>")
+    assert(simbolo == "&" or simbolo == "|" or simbolo == "=>")
     return ASOC_IZ if (simbolo == "&" or simbolo == "|") else ASOC_DE
     
 
@@ -63,7 +61,7 @@ def es_operador(token : str) -> bool:
     """
 
     token : str = token.strip()
-    #assert(len(token) > 0)
+    assert(len(token) > 0)
 
     return token == "&" or token == "|" or token == "=>" or token == "^"
 
@@ -80,7 +78,7 @@ def valor_booleano(valor : str) -> bool:
     """
 
     valor = valor.lower()
-    #assert(valor == "true" or valor == "false")
+    assert(valor == "true" or valor == "false")
     return valor == "true"
 
 
@@ -97,7 +95,7 @@ def realizar_operacion_binaria(izq : bool, der : bool, ope : str) -> bool:
         Resultado de la operacion binaria
     """
     
-    #assert(ope == "&" or ope == "|" or ope == "=>")
+    assert(ope == "&" or ope == "|" or ope == "=>")
 
     if (ope == "&"):
         return izq and der
@@ -106,80 +104,35 @@ def realizar_operacion_binaria(izq : bool, der : bool, ope : str) -> bool:
     return (not izq) or der
 
 
-def calcular_valor_prefijo(expresion : str) -> bool:
+def realizar_operacion_binaria_arbol(izq : NodoNotacion, der : NodoNotacion, ope : str) -> NodoNotacion:
     """
-    Calcula el valor de una expresion logica prefija
+    Realiza una operacion binaria entre dos nodos de tokens y 
+    crea el nodo resultante de esta peracon
 
     Arguments:
-        expresion -- Expresion prefija a evaluar
+        izq -- Operando izquierdo
+        der -- Operando derecho
+        ope -- Operador
 
     Returns:
-        Valor de la expresion prefija
+        Nodo representativo de la operacion binaria
     """
-
-    tokens : list[str] = expresion.split()
-    #assert(len(tokens) > 0)
-
-    valores : list[bool] = []
-    while len(tokens) > 0:
-        i : str = tokens.pop()
-        if (not es_operador(i)):
-            valores.append(valor_booleano(i))
-            continue
-        
-        if (i != "^"):
-            izq : bool = valores.pop()
-            der : bool = valores.pop()
-            valores.append(realizar_operacion_binaria(izq, der, i))
-            continue
-            
-        valores.append(not valores.pop())
     
-    return valores.pop()
-
-
-def calcular_valor_postfijo(expresion : str) -> bool:
-    """
-    Calcula el valor de una expresion logica postfija
-
-    Arguments:
-        expresion -- Expresion postfija a evaluar
-
-    Returns:
-        Valor de la expresion postfija
-    """
-
-    tokens : list[str] = expresion.split()
-    tokens = tokens[::-1]
-    #assert(len(tokens) > 0)
-    
-    valores : list[bool] = []
-    while len(tokens) > 0:
-        i : str = tokens.pop()
-        if (not es_operador(i)):
-            valores.append(valor_booleano(i))
-            continue
-        
-        if (i != "^"):
-            der : bool = valores.pop()
-            izq : bool = valores.pop()
-            valores.append(realizar_operacion_binaria(izq, der, i))
-            continue
-            
-        valores.append(not valores.pop())
-    
-    return valores.pop()
+    assert(ope == "&" or ope == "|" or ope == "=>")
+    return NodoNotacion(ope, izq, der)
 
 
 def crear_arbol(expresion : str, pre : bool) -> bool:
     """
-    Calcula el valor de una expresion logica postfija
+    Crea un arbol representando las operaciones y valores de la 
+    expresion
 
     Arguments:
-        expresion -- Expresion postfija a evaluar
+        expresion -- Expresion a crear arbol
+        pre -- El arbol es prefijo
 
     Returns:
-        Valor de la expresion postfija
+        Raiz del arbol de expresion creado
     """
 
     tokens : list[str] = expresion.split() if pre else (expresion.split())[::-1]
@@ -198,89 +151,6 @@ def crear_arbol(expresion : str, pre : bool) -> bool:
             
         valores.append(NodoNotacion("^", None, valores.pop()))
 
-    return valores.pop()
-
-
-def realizar_operacion_binaria_arbol(izq : NodoNotacion, der : NodoNotacion, ope : str) -> NodoNotacion:
-    """
-    Realiza una operacion binaria entre dos nodos de tokens y 
-    crea el nodo resultante de esta peracon
-
-    Arguments:
-        izq -- Operando izquierdo
-        der -- Operando derecho
-        ope -- Operador
-
-    Returns:
-        Nodo representativo de la operacion binaria
-    """
-    
-    #assert(ope == "&" or ope == "|" or ope == "=>")
-    return NodoNotacion(ope, izq, der)
-
-
-def crear_arbol_prefijo(expresion : str) -> NodoNotacion:
-    """
-    Crea un arbol que representa una expresion prefija
-
-    Arguments:
-        expresion -- Expresion base
-
-    Returns:
-        Raiz del arbol
-    """
-
-    tokens : list[str] = expresion.split()
-    #assert(len(tokens) > 0)
-
-    valores : list[NodoNotacion] = []
-    while len(tokens) > 0:
-        i : str = tokens.pop()
-        if (not es_operador(i)):
-            valores.append(NodoNotacion(i, None, None))
-            continue
-        
-        if (i != "^"):
-            izq : NodoNotacion = valores.pop()
-            der : NodoNotacion = valores.pop()
-            valores.append(realizar_operacion_binaria_arbol(izq, der, i))
-            continue
-            
-        valores.append(NodoNotacion("^", None, valores.pop()))
-    
-    return valores.pop()
-
-
-def crear_arbol_postfijo(expresion : str) -> NodoNotacion:
-    """
-    Crea un arbol que representa una expresion postfija
-
-    Arguments:
-        expresion -- Expresion base
-
-    Returns:
-        Raiz del arbol
-    """
-
-    tokens : list[str] = expresion.split()
-    tokens = tokens[::-1]
-    #assert(len(tokens) > 0)
-    
-    valores : list[NodoNotacion] = []
-    while len(tokens) > 0:
-        i : str = tokens.pop()
-        if (not es_operador(i)):
-            valores.append(NodoNotacion(i, None, None))
-            continue
-        
-        if (i != "^"):
-            der : NodoNotacion = valores.pop()
-            izq : NodoNotacion = valores.pop()
-            valores.append(realizar_operacion_binaria_arbol(izq, der, i))
-            continue
-            
-        valores.append(NodoNotacion("^", None, valores.pop()))
-    
     return valores.pop()
 
 
@@ -350,41 +220,19 @@ def conflicto_asociativo(raiz : NodoNotacion, hijo : NodoNotacion, asoc_prueba :
 
     return tiene_misma_preced(raiz, hijo) and tiene_misma_asoc(raiz, hijo) and asociacion(raiz.tok) == asoc_prueba
 
-
-def recorrer_infijo_string(raiz : NodoNotacion, acum : str = "") -> str:
-    """
-    Recorre un arbol de expresion y crea un string infijo de una
-    expresion logica
-
-    Arguments:
-        raiz -- Raiz del arbol
-    """
-    
-    if (raiz.lv != None):
-        if (tiene_mayor_preced(raiz, raiz.lv) or conflicto_asociativo(raiz, raiz.lv, ASOC_DE)):
-            acum += f"({recorrer_infijo_string(raiz.lv)})"
-        else:
-            acum += recorrer_infijo_string(raiz.lv)
-
-    acum += f" {raiz.tok} " if es_operador(raiz.tok) else f"{raiz.tok}"
-
-    if (raiz.rv != None):
-        if (tiene_mayor_preced(raiz, raiz.rv) or conflicto_asociativo(raiz, raiz.rv, ASOC_IZ)):
-            acum += f"({recorrer_infijo_string(raiz.rv)})"
-        else:
-            acum += recorrer_infijo_string(raiz.rv)
-    
-    return acum
     
 def recorrer_infijo(raiz : NodoNotacion, acumS : str = "") -> tuple[bool, str]:
     """
-    Recorre un arbol de expresion y crea un string infijo de una
-    expresion logica
+    Recorre un arbol de expresion y calcula tanto un string en notacion infija,
+    como el valor de la expresion
 
     Arguments:
         raiz -- Raiz del arbol
+    
+    Returns:
+        Tupla con valor de la expresion y traduccion a forma infija. En ese orden
     """
-    l = r = (None, None)
+    l, r = (None, None)
     if (raiz.lv != None):
         l = recorrer_infijo(raiz.lv)
         if (tiene_mayor_preced(raiz, raiz.lv) or conflicto_asociativo(raiz, raiz.lv, ASOC_DE)):
@@ -408,42 +256,36 @@ def recorrer_infijo(raiz : NodoNotacion, acumS : str = "") -> tuple[bool, str]:
     
     return (valor_booleano(raiz.tok), acumS)
 
-#a = crear_arbol_prefijo("| & => true true false ^ true")
-#print(f"{recorrer_infijo_string(a)}\n")
-#
-#b = crear_arbol_prefijo("& | => true true false | true ^ false")
-#print(f"{recorrer_infijo_string(b)}\n")
-#
-#c = crear_arbol_prefijo("=> => => => true false true false true")
-#print(f"{recorrer_infijo_string(c)}\n")
-#
-#d = crear_arbol_prefijo("| & | & true true true true true")
-#print(f"{recorrer_infijo_string(d)}\n")
-#
-#e = crear_arbol_prefijo("| & ^ => true true false true")
-#print(f"{recorrer_infijo_string(e)}\n")
-#
-#f = crear_arbol_prefijo("=> true => true => true => true true")
-#print(f"{recorrer_infijo_string(f)}\n")
-#
-#g = crear_arbol_prefijo("| true & true & true | true & true true")
-#
-#print(f"{recorrer_infijo_string(g)}\n")
-#
-#h = crear_arbol_prefijo("| & & | & true true true true true true")
-#
-#print(f"{recorrer_infijo_string(h)}\n")
-#print(calcular_valor_postfijo("true false => false | true false ^ | &"))
-#
-i = crear_arbol_postfijo("true false => false | true false ^ | &")
-ir = calcular_valor_postfijo("true false => false | true false ^ | &")
-iss = recorrer_infijo_string(i)
 
-xd = crear_arbol("true false => false | true false ^ | &", False)
+def calcular_valor(exp : str, pre : bool) -> bool:
+    """
+    Calcula el valor de una expresion
 
-rxd = recorrer_infijo(xd)
-print(ir == rxd[0])
-print(iss == rxd)
+    Arguments:
+        exp -- Expresion
+        pre -- Es prefija o no
+
+    Returns:
+        Valor booleano de la expresion
+    """
+
+    return recorrer_infijo(crear_arbol(exp, pre))[0]
+
+
+def calcular_infijo(exp : str, pre : bool) -> str:
+    """
+    Calcula el string infijo de una expresion
+
+    Arguments:
+        exp -- Expresion
+        pre -- Es prefija o no
+
+    Returns:
+        String infijo de la expresion
+    """
+
+    return recorrer_infijo(crear_arbol(exp, pre))[1]
+
 
 if __name__ == '__main__':
     print("You found a secret area!")
