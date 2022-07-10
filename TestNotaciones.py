@@ -1,7 +1,7 @@
 import unittest
 from Notaciones import *
 
-class BuddyAllocationTests(unittest.TestCase):
+class NotacionesTest(unittest.TestCase):
 
     def test_valores(self):
         """
