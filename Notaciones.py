@@ -287,6 +287,6 @@ def calcular_infijo(exp : str, pre : bool) -> str:
     return recorrer_infijo(crear_arbol(exp, pre))[1]
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     print("You found a secret area!")
     quit()
