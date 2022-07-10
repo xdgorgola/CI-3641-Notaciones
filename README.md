@@ -3,7 +3,7 @@ Evaluador de expresiones lógicas en notación pre/post fija y traductor hacia e
 
 ## Modo de uso
 ### Ejecución
-Correr el archivo **Simulator.py** con Python 3.10.5.
+Correr el archivo **SimulaDor.py** con Python 3.10.5.
 ### Comandos del programa
 ```
 EVAL <ORDEN> <EXPRESION>
