@@ -10,14 +10,14 @@ TOKEN_PRE = "PRE"
 run : bool = True
 def simulator_usage():
     print("Uso:\n\tEVAL <ORDEN> <EXPRESION>")
-    print("\tEvalua la expresion <EXPRESION> escrita en orden <ORDEN>")
+    print("\t\tEvalua la expresion <EXPRESION> escrita en orden <ORDEN>")
 
     print("\n\tMOSTRAR <ORDEN> <EXPRESION>")
-    print("\tConvierte a orden infijo la expresion <EXPRESION> con orden <ORDEN>")
+    print("\t\tConvierte a orden infijo la expresion <EXPRESION> con orden <ORDEN>")
 
-    print("\n\tORDENES PERMITIDOS:")
-    print("\t\t-PRE: Orden pre-fijo")
-    print("\t\t-POST: Orden post-fijo")
+    print("\n\t\tORDENES PERMITIDOS:")
+    print("\t\t\t-PRE: Orden pre-fijo")
+    print("\t\t\t-POST: Orden post-fijo")
 
     print("\n\tSALIR\n\t\tMata\\sale del programa.")
 

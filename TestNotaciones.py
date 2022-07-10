@@ -75,5 +75,68 @@ class BuddyAllocationTests(unittest.TestCase):
         self.assertTrue(calcular_valor("false false =>", False))
 
 
-if __name__ == '__main__':
+    def test_asociatividad(self):
+        """
+        Prueba de parentizado por reglas de asociatividad izquierda y derecha
+        """
+        
+        exp = "(((true => true) => true) => true) => true"
+        self.assertTrue(exp == calcular_infijo("=> => => => true true true true true", True))
+        self.assertTrue(exp == calcular_infijo("true true => true => true => true =>", False).strip())
+
+        exp = "true => true => true => true => true"
+        self.assertTrue(exp == calcular_infijo("=> true => true => true => true true", True))
+        self.assertTrue(exp == calcular_infijo("true true true true true => => => =>", False).strip())
+
+        exp = "true & (true & (true & (true & true)))"
+        self.assertTrue(exp == calcular_infijo("& true & true & true & true true", True))
+        self.assertTrue(exp == calcular_infijo("true true true true true & & & &", False).strip())
+
+        exp = "true & true & true & true & true"
+        self.assertTrue(exp == calcular_infijo("& & & & true true true true true", True))
+        self.assertTrue(exp == calcular_infijo("true true & true & true & true &",False).strip())
+
+        exp = "true | (true | (true | (true | true)))"
+        self.assertTrue(exp == calcular_infijo("| true | true | true | true true", True))
+        self.assertTrue(exp == calcular_infijo("true true true true true | | | |", False).strip())
+
+        exp = "true | true | true | true | true"
+        self.assertTrue(exp == calcular_infijo("| | | | true true true true true", True))
+        self.assertTrue(exp == calcular_infijo("true true | true | true | true |",False).strip())
+
+    
+    def test_precedencia(self):
+        """
+        Pruebas de precedencia de operadores
+        """
+
+        exp = "(true => true) & true"
+        self.assertTrue(exp == calcular_infijo("& => true true true", True))
+        self.assertTrue(exp == calcular_infijo("true true => true &", False).strip())
+
+        exp = "true & (true => true)"
+        self.assertTrue(exp == calcular_infijo("& true => true true", True))
+        self.assertTrue(exp == calcular_infijo("true true true => &", False).strip())
+
+        exp = "(true => true) | true"
+        self.assertTrue(exp == calcular_infijo("| => true true true", True))
+        self.assertTrue(exp == calcular_infijo("true true => true |", False).strip())
+
+        exp = "true | (true => true)"
+        self.assertTrue(exp == calcular_infijo("| true => true true", True))
+        self.assertTrue(exp == calcular_infijo("true true true => |", False).strip())
+
+        exp = "^ (true & true)"
+        self.assertTrue(exp == calcular_infijo("^ & true true", True).strip())
+        self.assertTrue(exp == calcular_infijo("true true & ^", False).strip())
+
+        exp = "^ (true | true)"
+        self.assertTrue(exp == calcular_infijo("^ | true true", True).strip())
+        self.assertTrue(exp == calcular_infijo("true true | ^", False).strip())
+
+        exp = "^ (true => true)"
+        self.assertTrue(exp == calcular_infijo("^ => true true", True).strip())
+        self.assertTrue(exp == calcular_infijo("true true => ^", False).strip())
+
+if __name__ == '__main__':  # pragma: no cover
     unittest.main()
